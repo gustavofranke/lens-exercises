@@ -76,3 +76,54 @@ e :: User
 e = metadata.numLogins %~ (+ 1) $ user1
 -- User {_name = "qiao.yifan", _userid = 103, _metadata = UserInfo {_numLogins = 21, _associatedIPs = ["52.39.193.61","52.39.193.75"]}}
 
+-- II 
+-- *Exercises Control.Lens> user1 & email .~ "qyifan@xingxin.com"
+
+-- <interactive>:27:9: error:
+--     Variable not in scope: email :: ASetter User b a0 [Char]
+x1 :: User
+x1 = user1 & name .~ "qyifan@xingxin.com"
+
+f :: User
+f = user1 & metadata .~ (UserInfo 17 [])
+-- User {_name = "qiao.yifan", _userid = 103, _metadata = UserInfo {_numLogins = 17, _associatedIPs = []}}
+
+g :: User
+g = userid .~ -1 $ user1
+-- User {_name = "qiao.yifan", _userid = -1, _metadata = UserInfo {_numLogins = 20, _associatedIPs = ["52.39.193.61","52.39.193.75"]}}
+
+-- *Exercises Control.Lens> metadata.associatedIPs .~ [ "50.193.0.23" ] & user1
+-- <interactive>:30:47: error:
+--     • Couldn't match expected type ‘(User -> User) -> b’
+--                   with actual type ‘User’
+--     • In the second argument of ‘(&)’, namely ‘user1’
+--       In the expression:
+--         metadata . associatedIPs .~ ["50.193.0.23"] & user1
+--       In an equation for ‘it’:
+--           it = metadata . associatedIPs .~ ["50.193.0.23"] & user1
+--     • Relevant bindings include it :: b (bound at <interactive>:30:1)
+x2 :: User
+x2 = user1 & metadata.associatedIPs .~ [ "50.193.0.23" ]
+
+-- *Exercises Control.Lens> user1 ^. numLogins.metadata
+
+-- <interactive>:31:10: error:
+--     • Couldn't match type ‘UserInfo’ with ‘User’
+--       Expected type: Getting UserInfo User UserInfo
+--         Actual type: (UserInfo -> Const UserInfo UserInfo)
+--                      -> UserInfo -> Const UserInfo UserInfo
+--     • In the second argument of ‘(^.)’, namely ‘numLogins . metadata’
+--       In the expression: user1 ^. numLogins . metadata
+--       In an equation for ‘it’: it = user1 ^. numLogins . metadata
+
+-- <interactive>:31:20: error:
+--     • Couldn't match type ‘User’ with ‘Int’
+--       Expected type: (UserInfo -> Const UserInfo UserInfo)
+--                      -> Int -> Const UserInfo Int
+--         Actual type: (UserInfo -> Const UserInfo UserInfo)
+--                      -> User -> Const UserInfo User
+--     • In the second argument of ‘(.)’, namely ‘metadata’
+--       In the second argument of ‘(^.)’, namely ‘numLogins . metadata’
+--       In the expression: user1 ^. numLogins . metadata
+x3 :: Int
+x3 = user1 ^. metadata.numLogins
