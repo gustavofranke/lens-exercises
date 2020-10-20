@@ -127,3 +127,28 @@ x2 = user1 & metadata.associatedIPs .~ [ "50.193.0.23" ]
 --       In the expression: user1 ^. numLogins . metadata
 x3 :: Int
 x3 = user1 ^. metadata.numLogins
+
+--  III
+-- Get the associated IP addresses.
+h :: [Text]
+h = user1 ^. metadata.associatedIPs
+
+-- Update the user so that the associated IP addresses are in reverse order.
+i :: User
+i = user1 & metadata.associatedIPs %~ reverse
+-- User {_name = "qiao.yifan", _userid = 103, _metadata = UserInfo {_numLogins = 20, _associatedIPs = ["52.39.193.75","52.39.193.61"]}}
+
+-- Update the user so that each word in the name is capitalized.
+j :: User
+j = user1 & name %~ toUpper
+
+-- Set the number of logins to 1.
+k :: User
+k = user1 & metadata.numLogins .~ 1
+
+k' :: User
+k' = user1 & metadata.numLogins %~ (+1)
+
+-- Remove all associated IP addresses except the first.
+l :: User
+l = user1 & metadata.associatedIPs %~ (\ips -> [head ips])
