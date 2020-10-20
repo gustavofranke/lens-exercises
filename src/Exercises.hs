@@ -1,8 +1,8 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Exercises where
+module Exercises where -- TODO: rename to LensesExercises
 
-import Data.Text
+import Data.Text hiding (reverse, head)
 import Control.Lens
 
 -- :t (^.)
@@ -53,3 +53,26 @@ user1 = User
       ]
     }
   }
+
+-- I
+a :: Text
+a = user1 ^. name
+-- "qiao.yifan"
+
+b :: Int
+b = user1 ^. metadata.numLogins
+-- 20
+
+c :: User
+c = user1 & metadata.numLogins .~ 0
+-- User {_name = "qiao.yifan", _userid = 103, _metadata = UserInfo {_numLogins = 0, _associatedIPs = ["52.39.193.61","52.39.193.75"]}}
+--  :set -XOverloadedStrings
+
+d :: User
+d = user1 & metadata.associatedIPs %~ ("192.168.0.2" :)
+-- User {_name = "qiao.yifan", _userid = 103, _metadata = UserInfo {_numLogins = 20, _associatedIPs = ["192.168.0.2","52.39.193.61","52.39.193.75"]}}
+
+e :: User
+e = metadata.numLogins %~ (+ 1) $ user1
+-- User {_name = "qiao.yifan", _userid = 103, _metadata = UserInfo {_numLogins = 21, _associatedIPs = ["52.39.193.61","52.39.193.75"]}}
+
