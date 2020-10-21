@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE OverloadedStrings #-}
-module Exercises where -- TODO: rename to LensesExercises
+module LensesExercises where -- TODO: rename to LensesExercises
 
 import Data.Text hiding (reverse, head)
 import Control.Lens
@@ -104,6 +104,9 @@ g = userid .~ -1 $ user1
 --     • Relevant bindings include it :: b (bound at <interactive>:30:1)
 x2 :: User
 x2 = user1 & metadata.associatedIPs .~ [ "50.193.0.23" ]
+
+x2' :: User
+x2' = metadata.associatedIPs .~ [ "50.193.0.23" ] $ user1
 
 -- *Exercises Control.Lens> user1 ^. numLogins.metadata
 
