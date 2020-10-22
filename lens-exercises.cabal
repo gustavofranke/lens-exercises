@@ -49,4 +49,5 @@ test-suite test
                      , lens-exercises
   default-language:    Haskell2010
   other-modules:       LensesSpec
+                     , PrismsSpec
   build-tool-depends:  hspec-discover:hspec-discover == 2.*

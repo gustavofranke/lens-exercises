@@ -41,37 +41,69 @@ user2 =
 
 -- I
 a :: Maybe Integer
-a = user1 ^? key "metadata".key "num_logins"._Integer
--- Nothing
+a = user1 ^? key "metadata" . key "num_logins" . _Integer
 
 b :: Maybe Data.Text.Internal.Text
-b = user1 ^? key "email"._String
--- Just "qyifan@xingxin.com"
+b = user1 ^? key "email" . _String
 
 c :: Maybe Text
-c = user2 ^? key "email"._String
--- Nothing
+c = user2 ^? key "email" . _String
 
 d :: Maybe (Vector Value)
-d = user2 ^? key "metadata".key "associated_ips"._Array
--- Nothing
+d = user2 ^? key "metadata" . key "associated_ips" . _Array
 
 e :: Vector Value
-e = user2 ^. key "metadata".key "associated_ips"._Array
--- []
+e = user2 ^. key "metadata" . key "associated_ips" . _Array
 
 f :: Maybe Text
-f = user1 ^? key "name"._String.to Text.toUpper
--- ust "QIAO.YIFAN"
+f = user1 ^? key "name" . _String . to Text.toUpper
 
 g :: Value
-g = user1 & key "name"._String .~ "su.mucheng"
--- Object (fromList [("email",String "qyifan@xingxin.com"),("name",String "su.mucheng")])
+g = user1 & key "name" . _String .~ "su.mucheng"
 
 h :: Value
-h = user2 & key "email"._String .~ "yxiu@xingxin.com"
--- Object (fromList [("name",String "ye.xiu"),("metadata",Object (fromList [("num_logins",Number 27.0)]))])
+h = user2 & key "email" . _String .~ "yxiu@xingxin.com"
 
 i :: Value
-i = user2 & key "name"._String %~ Text.reverse
--- Object (fromList [("name",String "uix.ey"),("metadata",Object (fromList [("num_logins",Number 27.0)]))])
+i = user2 & key "name" . _String %~ Text.reverse
+
+-- II
+-- j = user2 ^. key "metadata".key "num_logins"._Integer
+--     • No instance for (Monoid Integer) arising from a use of ‘key’
+--     • In the first argument of ‘(.)’, namely ‘key "metadata"’
+--       In the second argument of ‘(^.)’, namely
+--         ‘key "metadata" . key "num_logins" . _Integer’
+--       In the expression:
+--         user2 ^. key "metadata" . key "num_logins" . _Integer
+j :: Maybe Integer
+j = user2 ^? key "metadata" . key "num_logins" . _Integer
+
+k :: Value
+k = user1 & key "metadata" . key "num_logins" . _Integer .~ 25
+
+-- l = user2 & key "metadata".key "num_logins"._Integer %~ (+ 1)
+-- • No instance for (Num Value) arising from a use of ‘+’
+-- • In the second argument of ‘(%~)’, namely ‘(+ 1)’
+--   In the second argument of ‘(&)’, namely
+--     ‘key "metadata" . key "num_logins" %~ (+ 1)’
+--   In the expression:
+--     user2 & key "metadata" . key "num_logins" %~ (+ 1)
+l :: Value
+l = user2 & key "metadata" . key "num_logins" . _Integer %~ (+ 1)
+
+-- m = user1 ^. key "email"
+-- • No instance for (Monoid Value) arising from a use of ‘key’
+-- • In the second argument of ‘(^.)’, namely ‘key "email"’
+--   In the expression: user1 ^. key "email"
+--   In an equation for ‘m’: m = user1 ^. key "email"
+m :: Maybe Value
+m = user1 ^? key "email"
+
+-- n = user2 & key "name"._String .~ 50
+-- • No instance for (Num Text) arising from the literal ‘50’
+-- • In the second argument of ‘(.~)’, namely ‘50’
+--   In the second argument of ‘(&)’, namely
+--     ‘key "name" . _String .~ 50’
+--   In the expression: user2 & key "name" . _String .~ 50
+n :: Value
+n = user2 & key "name" . _String .~ "50"
