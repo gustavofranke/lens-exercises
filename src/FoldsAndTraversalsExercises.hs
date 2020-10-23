@@ -7,8 +7,10 @@ import Control.Lens
 import Data.Aeson (Value)
 import Data.Aeson.Lens
 import Data.Aeson.QQ
+import Data.IORef
 import Data.Monoid
 import qualified Data.Text as Text
+import qualified Data.Text.IO as Text
 import Data.Text.Internal
 import Data.Vector
 
@@ -119,3 +121,50 @@ j =
       (\x -> Any $ Text.length x <= 8)
 
 -- Any {getAny = True}
+
+-- II.
+
+-- | for each username,
+-- print it out and prompt you for a replacement name,
+-- then return an IO containing the JSON with the updated names.
+k :: IO Value
+k =
+  users
+    & traverseOf
+      (key "users" . values . key "name" . _String)
+      (\x -> print x *> fmap Text.pack getLine)
+
+l :: IO Value
+l =
+  do
+    ref <- newIORef 0
+    users
+      & traverseOf
+        ( key "users"
+            . _Array
+            . traversed
+            . key "metadata"
+            . key "num_logins"
+            . _Integer
+        )
+        (\x -> modifyIORef' ref (+ x) *> readIORef ref)
+
+m :: IO Value
+m =
+  users
+    & traverseOf
+      (key "users" . values . key "email" . _String)
+      (\x -> Text.putStrLn x *> pure (Text.reverse x))
+
+getAliasMay :: Text -> Maybe Text
+getAliasMay "ye.xiu" = Just "ye.qiu"
+getAliasMay _ = Nothing
+
+-- getAliasMay x        = Just x
+
+n :: Maybe Value
+n =
+  users
+    & traverseOf
+      (key "users" . values . key "name" . _String)
+      getAliasMay
